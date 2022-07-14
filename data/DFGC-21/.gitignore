@@ -1,0 +1,4 @@
+*
+!.gitignore
+!./bbox_landmarks.json
+!./Readme.md
