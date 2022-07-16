@@ -1,34 +1,46 @@
-from mtcnn.mtcnn import MTCNN
+from os import path
+from os import listdir
 import cv2
+import face_recognition
 
-# Supress tensorflow warnings
-import os
-#os. environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-
-detector = MTCNN()
-
-IMAGES_PATH = './dataset/fake'
-
-def get_filenames():
-    import os
-    return [os.path.join('./data/dataset/fake/', f) for f in os.listdir('./data/dataset/fake/')]
+directory = './data/boundbox'
 
 if __name__ == '__main__':
+  base_path = './data/face_extraction'
+  base_fake_path = './data/dataset/fake'
+  base_real_path = './data/dataset/real'
+
   print('Extracting faces...')
 
-  filenames = get_filenames()
+  fakes = listdir('./data/dataset/fake')
+  reals = listdir('./data/dataset/real')
 
-  total = len(filenames)
+  fake_total = len(fakes)
+  real_total = len(reals)  
 
-  for filename in filenames:
-    print('Processing {} ({}/{})'.format(filename, filenames.index(filename) + 1, total))
-    img = cv2.imread(filename)    
-    cv2.waitKey(0)    
-    detected_faces = detector.detect_faces(img)
-    print(detected_faces)
-    if len(detected_faces) > 0:
-      for face in detected_faces:
-        x, y, w, h = face['box']
-        crop_img = img[y:y+h, x:x+w]        
-        out_path = os.path.join(IMAGES_PATH, 'face_' + os.path.basename(filename))
-        cv2.imwrite(out_path,crop_img)    
+  for i,f in enumerate(fakes):
+    f = f.split(',')
+    filename = f[0]
+    print(f'Processing {filename} ({i}/{fake_total})')
+    image = face_recognition.load_image_file(path.join(base_fake_path,filename))
+    face_locations = face_recognition.face_locations(image)
+    for face_location in face_locations:
+      top, right, bottom, left = face_location
+      crop_img = image[top:bottom, left:right]
+      out_path = path.join(base_path, 'fake', path.basename(filename))
+      cv2.cvtColor(crop_img, cv2.COLOR_BGR2RGB, crop_img)
+      cv2.imwrite(out_path, crop_img)
+      break
+
+  for i,f in enumerate(reals):
+    f = f.split(',')
+    filename = f[0]
+    print(f'Processing {filename} ({i}/{real_total})')
+    image = face_recognition.load_image_file(path.join(base_real_path, filename))
+    face_locations = face_recognition.face_locations(image)    
+    for face_location in face_locations:
+      top, right, bottom, left = face_location
+      crop_img = image[top:bottom, left:right]
+      out_path = path.join(base_path, 'real', path.basename(filename))
+      cv2.cvtColor(crop_img, cv2.COLOR_BGR2RGB, crop_img)
+      cv2.imwrite(out_path, crop_img)
