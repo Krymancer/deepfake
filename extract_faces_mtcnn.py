@@ -1,8 +1,8 @@
 from mtcnn.mtcnn import MTCNN
 import cv2
+import os
 
 # Supress tensorflow warnings
-import os
 #os. environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 detector = MTCNN()
@@ -23,7 +23,6 @@ if __name__ == '__main__':
   for filename in filenames:
     print('Processing {} ({}/{})'.format(filename, filenames.index(filename) + 1, total))
     img = cv2.imread(filename)    
-    cv2.waitKey(0)    
     detected_faces = detector.detect_faces(img)
     print(detected_faces)
     if len(detected_faces) > 0:
