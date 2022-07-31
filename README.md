@@ -32,16 +32,30 @@ The DFGC-21 dataset contains the following sub-datasets:
 |yuejiang_852934.zip    	|		 crop and paste |  
 |zz110_853170.zip			|	 unkown| 
 
-Frist we will try to implement a classifier to detect deepfake images using the real_fulls and fake_baseline subdatasets. 
 
-The frist thing trid was to use the images at it is. no cropring or preprocessing and feed them in a mesoNet like model. 
+The first try, consist of a implementation of a simple classifier to detect deepfake images using the real_fulls and fake_baseline subdatasets. 
+For now we are justing trying to use the images at it is. no cropring or preprocessing and feed them in a mesoNet like model. 
+But as expected the classifier is not very accurate and unpredictable.
 
-The second try was to use opencv to extract faces, but the results are not good. much variantion and some images cant 
-extract the face. So i use [MTCNN](https://github.com/ipazc/mtcnn) to extract all faces then fit into the model. As the 
-results are no satisfatory either i tried to use another face detection method
+The second approach is to crop the faces to feed into the same model.
+I use three tools to extract the faces:
 
-The other model i use is [Face Recognition](https://github.com/ageitgey/face_recognition) to extract faces from images.
-this has a cli interface and can be used to extract faces from images given a directtory and it will return the filename and 
-the face location. 
+- [OpenCV](https://docs.opencv.org/3.4/da/d60/tutorial_face_main.html)
+- [MTCNN](https://github.com/ipazc/mtcnn)
+- [Face Recognition](https://github.com/ageitgey/face_recognition) 
 
-With this info i was able to extract the faces to feed into the model
+Use a script for each tool to extract the faces. then save the images at a separate folder, then feed into the model, with a Keras ImageGenerator.
+
+But the results are not good. Neither opencv, mtcnn or face_detection made much a difference in the results. Getting arround 0.6 accuracy, what is far from what i expected.
+
+The next step is to apply a padding in the faces and use data from eye, mouth, nose, and jaw to feed into the model. 
+I think i'll keep using the Face Recognition library for this. And only change the input of model to comport the new features we are gonna analyze.
+
+I researched about deepfake and find some interesting articles, [The Creation and Detection of Deepfakes: A Survey](https://arxiv.org/pdf/2004.11138.pdf) is a great starting point to
+get more in depth into the subject. Talks about how to create deepfake videos and images but also about post processing to make them more realistic and harder to detect.
+
+I also trying some thecnics i found in [FaceFlorencics++](https://github.com/ondyari/FaceForensics/blob/master/dataset/README.md) to maybe make de accuracy better.
+
+Some kaggle competitions are also interesting to try out:
+- [DeepFake Starter Kit](https://www.kaggle.com/code/gpreda/deepfake-starter-kit)
+- [DeepFake Introducation](https://www.kaggle.com/code/robikscube/kaggle-deepfake-detection-introduction)
