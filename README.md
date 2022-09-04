@@ -59,3 +59,5 @@ I also trying some thecnics i found in [FaceFlorencics++](https://github.com/ond
 Some kaggle competitions are also interesting to try out:
 - [DeepFake Starter Kit](https://www.kaggle.com/code/gpreda/deepfake-starter-kit)
 - [DeepFake Introducation](https://www.kaggle.com/code/robikscube/kaggle-deepfake-detection-introduction)
+
+Using [EfficientNetB0](https://www.tensorflow.org/api_docs/python/tf/keras/applications/efficientnet/EfficientNetB0) to instantiate the model based on [this paper](https://arxiv.org/abs/1905.11946) seems to have a huge effect in the accuracy.
